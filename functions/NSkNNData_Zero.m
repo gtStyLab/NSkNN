@@ -1,4 +1,4 @@
-function [dataImputed dataImputedWeighted] = NSkNNData_Zero(scaledMV,K,filteredMV)
+function [dataImputed dataImputedWeighted] = NSkNNData_Zero(scaledMV,K,avgMV,stddevMV)
 % Function to impute missing values in a dataset using NSkNN. scaledMV is 
 % the autoscale dataset with the missing values and K is the # of nearest 
 % neighbors to use to impute the data. filteredMV is the missing value 
@@ -6,11 +6,6 @@ function [dataImputed dataImputedWeighted] = NSkNNData_Zero(scaledMV,K,filteredM
 % NSkNNData_Zero does not skip neighbors that have NaN values in the same 
 % location as the metabolite being imputed. Instead, it replaces these NaN 
 % values with zero.
-
-% Calculate avgMV and stddevMV from filteredMV to help with zero
-% replacement later on
-avgMV = nanmean(filteredMV,2);
-stddevMV = nanstd(filteredMV,0,2);
 
 numCol = size(scaledMV,2);
 for col = 1:numCol
