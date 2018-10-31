@@ -1,1 +1,1 @@
-Contains all the results files used to plot the figures found in the manuscript and supplementary.
+Contains all the results files used for tables and to plot the figures found in the manuscript and supplementary (except Figures 6, S8-S15; see folder NSkNNvsKNNTN).

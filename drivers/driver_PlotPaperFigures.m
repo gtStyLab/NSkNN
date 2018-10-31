@@ -2,7 +2,7 @@
 
 clear;clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
-figureLetter = {'A.','B.','C.'};
+figureLetter = {'a.','b.','c.'};
 annotPosition = [0.1 0.98 0 0; 0.54 0.98 0 0; 0.1 0.51 0 0];
 figure('units','normalized','outerposition',[0 0 0.75 1]);
 
@@ -34,16 +34,28 @@ for dataSet = 1:3
 
         if LOD == 20
             a.Marker = 'p';
+            a.LineWidth = 1.5;
             b.Marker = 'p';
+            b.LineWidth = 1.5;
+            b.LineStyle = '--';
         elseif LOD == 40
             a.Marker = 's';
+            a.LineWidth = 1.5;
             b.Marker = 's';
+            b.LineWidth = 1.5;
+            b.LineStyle = '--';
         elseif LOD == 60
             a.Marker = '*';
+            a.LineWidth = 1.5;
             b.Marker = '*';
+            b.LineWidth = 1.5;
+            b.LineStyle = '--';
         elseif LOD == 80
             a.Marker = 'o';
+            a.LineWidth = 1.5;
             b.Marker = 'o';
+            b.LineWidth = 1.5;
+            b.LineStyle = '--';
         end
         
         a.MarkerSize = 11;
@@ -58,18 +70,28 @@ for dataSet = 1:3
         title(sprintf('MNAR %s Dataset',dataFile{dataSet}(1:end-4)),'FontSize',18);
         xlabel('% Total Missing');
         ylabel('Normalized Root Mean Square Error');
-        if dataSet == 1
-            lgd = legend('kNN - 20% LOD Threshold','NS-kNN - 20% LOD Threshold','kNN - 40% LOD Threshold','NS-kNN - 40% LOD Threshold','kNN - 60% LOD Threshold','NS-kNN - 60% LOD Threshold','kNN - 80% LOD Threshold','NS-kNN - 80% LOD Threshold','Location','northwest');
+        ylim([-inf 0.65]);
+        if dataSet == 1  
+            lgd1 = line(nan,nan,'Linestyle','-','LineWidth',1,'Marker','p','Color','b');
+            lgd2 = line(nan,nan,'Linestyle','--','Marker','p','Color','g');
+            lgd3 = line(nan,nan,'Linestyle','-','LineWidth',1,'Marker','s','Color','b');
+            lgd4 = line(nan,nan,'Linestyle','--','Marker','s','Color','g');
+            lgd5 = line(nan,nan,'Linestyle','-','LineWidth',1,'Marker','*','Color','b');
+            lgd6 = line(nan,nan,'Linestyle','--','Marker','*','Color','g');
+            lgd7 = line(nan,nan,'Linestyle','-','LineWidth',1,'Marker','o','Color','b');
+            lgd8 = line(nan,nan,'Linestyle','--','Marker','o','Color','g');
+            lgd = legend([lgd1,lgd2,lgd3,lgd4,lgd5,lgd6,lgd7,lgd8],{'kNN - 20% LOD Threshold','NS-kNN - 20% LOD Threshold','kNN - 40% LOD Threshold','NS-kNN - 40% LOD Threshold','kNN - 60% LOD Threshold','NS-kNN - 60% LOD Threshold','kNN - 80% LOD Threshold','NS-kNN - 80% LOD Threshold'},'Location','northwest');
             lgd.FontSize = 10;
         end
     end
 end
 
+
 %% MNAR-Titrate (MNAR-T) comparison of kNN, NSkNN, NSkNN_HM, NSkNN_Zero (Figure S2)
 
 clear;clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
-figureLetter = {'A.','B.','C.'};
+figureLetter = {'a.','b.','c.'};
 annotPosition = [0.1 0.98 0 0; 0.54 0.98 0 0; 0.1 0.51 0 0];
 
 for percentMV = [30]
@@ -104,9 +126,17 @@ for percentMV = [30]
         d = errorbar(xaxis,meanNRMSE_NSkNN_zero(xaxis+1),stdNRMSE_NSkNN_zero(xaxis+1));
         
         a.Color = 'b';
+        a.LineStyle = '-';
+        a.LineWidth = 1.5;
         b.Color = 'g';
+        b.LineStyle = '--';
+        b.LineWidth = 1.5;
         c.Color = 'r';
-        d.Color = 'm';
+        c.LineStyle = ':';
+        c.LineWidth = 1.5;
+        d.Color = 'k';
+        d.LineStyle = '-.';
+        d.LineWidth = 1.5;
 
         set(gca,'fontsize',14);
         title(sprintf('MNAR-T %s Dataset',dataFile{dataSet}(1:end-4)),'FontSize',18);
@@ -115,7 +145,7 @@ for percentMV = [30]
         set(gca,'Xtick',[0:(max(percentMNAR)/5):max(percentMNAR)],'XTickLabel',[1:6])
         set(gca,'XtickLabel',{'0' '20' '40' '60' '80' '100'})
         if dataSet == 1
-            lgd = legend('kNN','NS-kNN','NS-kNN HM','NS-kNN Zero','Location','northwest');
+            lgd = legend('kNN (EU)','NS-kNN','NS-kNN HM','NS-kNN Zero','Location','southwest');
             lgd.FontSize = 14;
         end
     end
@@ -126,7 +156,7 @@ end
 
 clear;clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
-figureLetter = {'A.','B.','C.'};
+figureLetter = {'a.','b.','c.'};
 annotPosition = [0.1 0.98 0 0; 0.54 0.98 0 0; 0.1 0.51 0 0];
 figure('units','normalized','outerposition',[0 0 0.75 1]);
 
@@ -149,19 +179,25 @@ for dataSet = 1:3
     % Plot significance
     max_yaxis = max([mean(NormalizedRMS_kNN) + std(NormalizedRMS_kNN); mean(NormalizedRMS_NSkNN) + std(NormalizedRMS_NSkNN)]) + max([mean(NormalizedRMS_kNN) + std(NormalizedRMS_kNN); mean(NormalizedRMS_NSkNN) + std(NormalizedRMS_NSkNN)])/40;
     max_yaxis = max_yaxis(xaxis);
-    significant = ttest2(NormalizedRMS_kNN,NormalizedRMS_NSkNN);
+    for numCondition = 1:size(NormalizedRMS_kNN,2)
+        [p,significant(numCondition)] = ranksum(NormalizedRMS_kNN(:,numCondition),NormalizedRMS_NSkNN(:,numCondition));
+    end
     significant(isnan(significant)) = 0;
     plot(xaxis(logical(significant(xaxis))),max_yaxis(logical(significant(xaxis))),'k*');
     
     a.Color = 'b';
+    a.LineStyle = '-';
+    a.LineWidth = 1.5;
     b.Color = 'g';
+    b.LineStyle = '--';
+    b.LineWidth = 1.5;
 
     set(gca,'fontsize',14);
     title(sprintf('MCAR %s Dataset',dataFile{dataSet}(1:end-4)));
     xlabel('# of Nearest Neighbors (k)');
     ylabel('Normalized Root Mean Square Error');
     if dataSet == 1
-        lgd = legend('kNN','NS-kNN','Location','northwest');
+        lgd = legend('kNN (EU)','NS-kNN','Location','northwest');
         lgd.FontSize = 14;
     end
     xlim([1 K]);
@@ -171,14 +207,14 @@ end
 
 clear;clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
-figureLetter = {'A.','B.','C.'};
-annotPosition = [0.1 0.98 0 0; 0.54 0.98 0 0; 0.1 0.51 0 0];
-figure('units','normalized','outerposition',[0 0 0.75 1]);
+figureLetter = {'a.','b.','c.'};
+annotPosition = [0.1 0.99 0 0; 0.54 0.99 0 0; 0.1 0.52 0 0];
+figure('units','normalized','outerposition',[0 0 0.345 0.46]);
 
 for dataSet = 1:3
     subplot(2,2,dataSet);
     figAnnot = annotation('textbox', annotPosition(dataSet,:), 'string', figureLetter{dataSet});
-    figAnnot.FontSize = 18;
+    figAnnot.FontSize = 12;
     figAnnot.FontWeight = 'bold';
     
     load(sprintf('%s_MCAR.mat',dataFile{dataSet}));
@@ -201,20 +237,26 @@ for dataSet = 1:3
     % Plot significance
     max_yaxis = max([mean(NormalizedRMS_kNN) + std(NormalizedRMS_kNN); mean(NormalizedRMS_NSkNN) + std(NormalizedRMS_NSkNN)]) + max([mean(NormalizedRMS_kNN) + std(NormalizedRMS_kNN); mean(NormalizedRMS_NSkNN) + std(NormalizedRMS_NSkNN)])/40;
     max_yaxis = max_yaxis(xaxis+1);
-    significant = ttest2(NormalizedRMS_kNN,NormalizedRMS_NSkNN);
+    for numCondition = 1:size(NormalizedRMS_kNN,2)
+        [p,significant(numCondition)] = ranksum(NormalizedRMS_kNN(:,numCondition),NormalizedRMS_NSkNN(:,numCondition));
+    end
     significant(isnan(significant)) = 0;
     plot(xaxis(logical(significant(xaxis+1))),max_yaxis(logical(significant(xaxis+1))),'k*');
     
     a.Color = 'b';
+    a.LineStyle = '-';
+    a.LineWidth = 1.25;
     b.Color = 'g';
+    b.LineStyle = '--';
+    b.LineWidth = 1.25;
     
-    set(gca,'fontsize',14);
-    title(sprintf('MCAR %s Dataset',dataFile{dataSet}(1:end-4)),'FontSize',18);
-    xlabel('% Total Missing');
+    set(gca,'fontsize',6,'fontweight','bold');
+    title(sprintf('MCAR %s Dataset',dataFile{dataSet}(1:end-4)),'FontSize',10);
+    xlabel('% Total Missing','FontSize',10);
     ylabel('Normalized Root Mean Square Error');
     if dataSet == 1
-        lgd = legend('kNN','NS-kNN','Location','northwest');
-        lgd.FontSize = 14;
+        lgd = legend('kNN (EU)','NS-kNN','Location','northwest');
+        lgd.FontSize = 6;
     end
 end
 
@@ -222,15 +264,15 @@ end
 
 clear;clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
-figureLetter = {'A.','B.','C.'};
-annotPosition = [0.1 0.98 0 0; 0.54 0.98 0 0; 0.1 0.51 0 0];
-figure('units','normalized','outerposition',[0 0 0.75 1]);
+figureLetter = {'a.','b.','c.'};
+annotPosition = [0.1 0.99 0 0; 0.54 0.99 0 0; 0.1 0.52 0 0];
+figure('units','normalized','outerposition',[0 0 0.345 0.46]);
 
 for dataSet = 1:3
     
     subplot(2,2,dataSet);
     figAnnot = annotation('textbox', annotPosition(dataSet,:), 'string', figureLetter{dataSet});
-    figAnnot.FontSize = 18;
+    figAnnot.FontSize = 12;
     figAnnot.FontWeight = 'bold';
     
     load(sprintf('%s_MNAR.mat',dataFile{dataSet}));
@@ -252,20 +294,26 @@ for dataSet = 1:3
     % Plot significance
     max_yaxis = max([mean(NormalizedRMS_kNN) + std(NormalizedRMS_kNN); mean(NormalizedRMS_NSkNN) + std(NormalizedRMS_NSkNN)]) + max([mean(NormalizedRMS_kNN) + std(NormalizedRMS_kNN); mean(NormalizedRMS_NSkNN) + std(NormalizedRMS_NSkNN)])/40;
     max_yaxis = max_yaxis(xaxis+1);
-    significant = ttest2(NormalizedRMS_kNN,NormalizedRMS_NSkNN);
+    for numCondition = 1:size(NormalizedRMS_kNN,2)
+        [p,significant(numCondition)] = ranksum(NormalizedRMS_kNN(:,numCondition),NormalizedRMS_NSkNN(:,numCondition));
+    end
     significant(isnan(significant)) = 0;
     plot(xaxis(logical(significant(xaxis+1))),max_yaxis(logical(significant(xaxis+1))),'k*');
     
     a.Color = 'b';
+    a.LineStyle = '-';
+    a.LineWidth = 1.25;
     b.Color = 'g';
+    b.LineStyle = '--';
+    b.LineWidth = 1.25;
 
-    set(gca,'fontsize',14);
-    title(sprintf('MNAR %s Dataset',dataFile{dataSet}(1:end-4)),'FontSize',18);
-    xlabel('% Total Missing');
+    set(gca,'fontsize',6,'fontweight','bold');
+    title(sprintf('MNAR %s Dataset',dataFile{dataSet}(1:end-4)),'FontSize',10);
+    xlabel('% Total Missing','fontsize',10);
     ylabel('Normalized Root Mean Square Error');
     if dataSet == 1
-        lgd = legend('kNN','NS-kNN','Location','northwest');
-        lgd.FontSize = 14;
+        lgd = legend('kNN (EU)','NS-kNN','Location','northwest');
+        lgd.FontSize = 6;
     end
 end
 
@@ -273,16 +321,16 @@ end
 
 clear;clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
-figureLetter = {'A.','B.','C.'};
-annotPosition = [0.1 0.98 0 0; 0.54 0.98 0 0; 0.1 0.51 0 0];
+figureLetter = {'a.','b.','c.'};
+annotPosition = [0.1 0.99 0 0; 0.54 0.99 0 0; 0.1 0.52 0 0];
 
 for percentMV = [10, 30]
-    figure('units','normalized','outerposition',[0 0 0.75 1]);
+    figure('units','normalized','outerposition',[0 0 0.345 0.46]);
     for dataSet = 1:3
 
         subplot(2,2,dataSet);
         figAnnot = annotation('textbox', annotPosition(dataSet,:), 'string', figureLetter{dataSet});
-        figAnnot.FontSize = 18;
+        figAnnot.FontSize = 12;
         figAnnot.FontWeight = 'bold';
 
         load(sprintf('%s_MNART_MV%02d.mat',dataFile{dataSet},percentMV));
@@ -306,8 +354,8 @@ for percentMV = [10, 30]
         %}
         
         % Plot all points or a select amount of points
-        %xaxis = 0:percentMNAR;
-        xaxis = 0:3:percentMNAR;
+        %xaxis = 0:percentMNAR; % Used for Figure S4
+        xaxis = 0:3:percentMNAR; % Used for Figure 4
         
         a = errorbar(xaxis,meanNRMSE_kNN(xaxis+1),stdNRMSE_kNN(xaxis+1));
         b = errorbar(xaxis,meanNRMSE_NSkNN(xaxis+1),stdNRMSE_NSkNN(xaxis+1));
@@ -315,41 +363,47 @@ for percentMV = [10, 30]
         % Plot significance       
         max_yaxis = max([mean(NormalizedRMS_kNN) + std(NormalizedRMS_kNN); mean(NormalizedRMS_NSkNN) + std(NormalizedRMS_NSkNN)]) + max([mean(NormalizedRMS_kNN) + std(NormalizedRMS_kNN); mean(NormalizedRMS_NSkNN) + std(NormalizedRMS_NSkNN)])/40;
         max_yaxis = max_yaxis(xaxis+1);
-        significant = ttest2(NormalizedRMS_kNN,NormalizedRMS_NSkNN);
+        for numCondition = 1:size(NormalizedRMS_kNN,2)
+            [p,significant(numCondition)] = ranksum(NormalizedRMS_kNN(:,numCondition),NormalizedRMS_NSkNN(:,numCondition));
+        end
         significant(isnan(significant)) = 0;
         plot(xaxis(logical(significant(xaxis+1))),max_yaxis(logical(significant(xaxis+1))),'k*');
         
         a.Color = 'b';
+        a.LineStyle = '-';
+        a.LineWidth = 1.25;
         b.Color = 'g';
+        b.LineStyle = '--';
+        b.LineWidth = 1.25;
 
-        set(gca,'fontsize',14);
-        title(sprintf('MNAR-T %s Dataset',dataFile{dataSet}(1:end-4)),'FontSize',18);
-        xlabel('% missing values that are MNAR');
+        set(gca,'fontsize',6,'fontweight','bold');
+        title(sprintf('MNAR-T %s Dataset',dataFile{dataSet}(1:end-4)),'FontSize',10);
+        xlabel('% missing values that are MNAR','fontsize',10);
         ylabel('Normalized Root Mean Square Error');
         set(gca,'Xtick',[0:(max(percentMNAR)/5):max(percentMNAR)],'XTickLabel',[1:6])
         set(gca,'XtickLabel',{'0' '20' '40' '60' '80' '100'})
         if dataSet == 1
-            lgd = legend('kNN','NS-kNN','Location','northwest');
-            lgd.FontSize = 14;
+            lgd = legend('kNN (EU)','NS-kNN','Location','northwest');
+            lgd.FontSize = 6;
         end
     end
 end
 
-%% Mixed Missingness (MM) (Figure 5, Figure S5, and Figure S6) 
+%% Mixed Missingness (MM) (Figure 5, S5-S6) 
 
 clear;clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
-figureLetter = {'A.','B.','C.','D.'};
-annotPosition = [0.1 0.98 0 0; 0.54 0.98 0 0; 0.1 0.51 0 0; 0.54 0.51 0 0];
+figureLetter = {'a.','b.','c.','d.'};
+annotPosition = [0.1 0.99 0 0; 0.54 0.99 0 0; 0.1 0.52 0 0; 0.54 0.52 0 0];
 
 for dataSet = 1:3
-    figure('units','normalized','outerposition',[0 0 0.75 1]);
+    figure('units','normalized','outerposition',[0 0 0.345 0.46]);
     
     for figureNum = 1:4
         load(sprintf('%s_MM_%s.mat',dataFile{dataSet},figureLetter{figureNum}(1:end-1)));
         subplot(2,2,figureNum);
         figAnnot = annotation('textbox', annotPosition(figureNum,:), 'string', figureLetter{figureNum});
-        figAnnot.FontSize = 18;
+        figAnnot.FontSize = 12;
         figAnnot.FontWeight = 'bold';
         hold on;
 
@@ -367,16 +421,18 @@ for dataSet = 1:3
         
         % Percentage at which kNN and NS-kNN error plots intersect. Uses InterX
         % function by NS 2010 found on MathWorks File Exchange.
+        %{
         intersection = InterX([percentMNAR(1:OneHundredPercMNAR(1)-1);mean_NormalizedRMS_kNN(1:OneHundredPercMNAR(1)-1)],[percentMNAR(1:OneHundredPercMNAR(1)-1);mean_NormalizedRMS_NSkNN(1:OneHundredPercMNAR(1)-1)]);
         if isempty(intersection)
             0 % If no intersection
         else
             intersection(1,end)
         end
+        %}
         
         % Plot all points or a select amount of points
-        xaxis = 1:OneHundredPercMNAR(1)-1;
-        %xaxis = 1:3:OneHundredPercMNAR(1)-1;
+        %xaxis = 1:OneHundredPercMNAR(1)-1;
+        xaxis = 1:3:OneHundredPercMNAR(1)-1;
         
         a = errorbar(percentMNAR(xaxis),mean_NormalizedRMS_kNN(xaxis),std_NormalizedRMS_kNN(xaxis));
         b = errorbar(percentMNAR(xaxis),mean_NormalizedRMS_NSkNN(xaxis),std_NormalizedRMS_NSkNN(xaxis));
@@ -384,78 +440,139 @@ for dataSet = 1:3
         % Plot significance       
         max_yaxis = max([mean_NormalizedRMS_kNN + std_NormalizedRMS_kNN; mean_NormalizedRMS_NSkNN + std_NormalizedRMS_NSkNN]) + max([mean_NormalizedRMS_kNN + std_NormalizedRMS_kNN; mean_NormalizedRMS_NSkNN + std_NormalizedRMS_NSkNN])/40;
         max_yaxis = max_yaxis(xaxis);
-        significant = ttest2(NormalizedRMS_kNN,NormalizedRMS_NSkNN);
+        for numCondition = 1:size(NormalizedRMS_kNN,2)
+            [p,significant(numCondition)] = ranksum(NormalizedRMS_kNN(:,numCondition),NormalizedRMS_NSkNN(:,numCondition));
+        end
         significant(isnan(significant)) = 0;
         plot(percentMNAR(xaxis(logical(significant(xaxis)))),max_yaxis(logical(significant(xaxis))),'k*');
         
         a.Color = 'b';
+        a.LineStyle = '-';
+        a.LineWidth = 1.25;
         b.Color = 'g';
+        b.LineStyle = '--';
+        b.LineWidth = 1.25;
         
-        set(gca,'fontsize',14);
-        title(sprintf('Percent Missing = %d%%, III = %d%%',percentMV,percentMVlowAbund_III),'FontSize',18);
-        xlabel('% missing values that are MNAR');
+        set(gca,'fontsize',6,'fontweight','bold');
+        title(sprintf('Percent Missing = %d%%, III = %d%%',percentMV,percentMVlowAbund_III),'FontSize',10);
+        xlabel('% missing values that are MNAR','fontsize',10);
         ylabel('Normalized Root Mean Square Error');
         if figureNum == 1
-            lgd = legend('kNN','NS-kNN','Location','northwest');
-            lgd.FontSize = 14;
+            lgd = legend('kNN (EU)','NS-kNN','Location','northwest');
+            lgd.FontSize = 6;
         end
     end
 end
 
-%% NSkNN vs. kNN-TN (Figure 6, S7, S8)
+
+%% Distribution of the log of median abundances (Figure S7)
 
 clear;clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
+figureLetter = {'a.','b.','c.'};
+annotPosition = [0.1 0.98 0 0; 0.54 0.98 0 0; 0.1 0.51 0 0];
 
-figureLetter = {'A.','B.','C.','D.','E.','F.'};
-annotPosition = [0.1 0.99 0 0; 0.39 0.99 0 0; 0.67 0.99 0 0;...
-    0.1 0.51 0 0; 0.39 0.51 0 0; 0.67 0.51 0 0];
-
+figure('units','normalized','outerposition',[0 0 0.75 1]);
 for dataSet = 1:3
-    figure('units','normalized','outerposition',[0 0 0.75 1]);
+    data = load(dataFile{dataSet});
+    
+    medianAbundance = nanmedian(data.rawData,2);
+    medianAbundance = log(medianAbundance);
+    medianAbundance = (medianAbundance-min(medianAbundance))/range(medianAbundance); % scale x-axis from 0 to 1
+    
+    subplot(2,2,dataSet)
+    figAnnot = annotation('textbox', annotPosition(dataSet,:), 'string', figureLetter{dataSet});
+    figAnnot.FontSize = 18;
+    figAnnot.FontWeight = 'bold';
+
+    h1 = histogram(medianAbundance,50);
+    yt = get(gca, 'YTick');
+    new_yt = round(1000*yt/length(medianAbundance))/1000; % use fractions on y-axis
+    set(gca, 'YTick',yt, 'YTickLabel',new_yt);
+    title(sprintf('%s Data',dataFile{dataSet}(1:end-4)),'FontSize',18);
+    xlabel('Log of Median Metabolite Abundances (Scaled from 0 to 1)');
+    ylabel('Fraction of Total Metabolites');
+end
+
+%% NSkNN vs. KNN-TN on MM datasets (Figure 6, S8-S15)
+
+clear;clc;
+dataFile = {'BacteriaData','MouseData','HumanData','UrinaryHumanData','NeuralHumanData','MicrobeData','AntibioticMouseData','TobaccoData','SMData'};
+dataTitle = containers.Map({'BacteriaData','MouseData','HumanData','UrinaryHumanData','NeuralHumanData','MicrobeData','AntibioticMouseData','TobaccoData','SMData'},...
+    {'Bacteria Data','Mouse Data','Human Data','Human Urinary Data','Human Neural Data','Microbe Data','Mouse Antibiotic Data','Tobacco Data (LC-MS)','S. meliloti Data (LC-MS)'});
+
+figureLetter = {'a.','b.','c.','d.','e.','f.','g.','h.','i.','j.','k.','l.'};
+annotPosition = [0.1 0.97 0 0; 0.38 0.97 0 0; 0.67 0.97 0 0;...
+    0.1 0.74 0 0; 0.38 0.74 0 0; 0.67 0.74 0 0;...
+    0.1 0.525 0 0; 0.38 0.525 0 0; 0.67 0.525 0 0;...
+    0.1 0.305 0 0; 0.38 0.305 0 0; 0.67 0.305 0 0];
+
+for dataSet = 1:9
+    
     allData_matlab = [];
     allData_csv = [];
     allData = [];
     subplot_count = 1;
-    for percMNAR = [1/3 2/3]
-        for percMV = [9 15 30]
-            hold on;
-            fileName = sprintf('%s_PercentMV-%02d_PercentMNAR-%02d_results.mat',dataFile{dataSet},percMV,percMV*percMNAR);
-            csvName = sprintf('%s_PercentMV-%02d_PercentMNAR-%02d_results.csv',dataFile{dataSet},percMV,percMV*percMNAR);
-            matlabData = load(fileName);
-            csvData = csvread(csvName,1,1);
-
-            allData = [matlabData.NormalizedRMS_NSkNN_compiled csvData];
+    figure('units','normalized','outerposition',[0 0 0.345 0.75]);
+    for percMV = [10 30]     
+        for percentMVlowAbund_III = [30 40]    
+            for percMNAR = [25 50 75]
             
-            labelnames_allData = {'NS-kNN','kNN-TN'};
-            subplot(2,3,subplot_count);
-            figAnnot = annotation('textbox', annotPosition(subplot_count,:), 'string', figureLetter{subplot_count});
-            figAnnot.FontSize = 18;
-            figAnnot.FontWeight = 'bold';
-            boxplot(allData,labelnames_allData);
-                        
-            set(gca,'fontsize',14);
-            ylabel('Normalized RMSE');
-            title(sprintf('%s Data - %d%% MV, ^{%d}/_{%d} MNAR',dataFile{dataSet}(1:end-4),percMV,percMNAR*3,3),'FontSize',16);
-            subplot_count = subplot_count + 1;
-            ylim([0 2]);
-            
-            % Plot significance
-            significance = ttest(allData(:,1),allData(:,2));
-            if logical(significance)
-                xt = get(gca, 'XTick');
                 hold on;
-                plot(xt([1 2]), [1 1]*min(min(allData))*0.8, '-k',  mean(xt([1 2])), min(min(allData))*0.55, '*k')
+                matlabName = sprintf('%s_MM_PercMV-%02d_ThreshIII-%02d_PercMNAR-%02d_MATLABresults.csv',dataFile{dataSet},percMV,percentMVlowAbund_III,percMNAR);
+                rName = sprintf('%s_MM_PercMV-%02d_ThreshIII-%02d_PercMNAR-%02d_results.csv',dataFile{dataSet},percMV,percentMVlowAbund_III,percMNAR);
+                matlabData = csvread(matlabName);
+                rData = csvread(rName,1,1);
+
+                allData = [matlabData(:,1) rData matlabData(:,2) matlabData(:,3)];
+
+                % Plot boxplots
+                labelnames_allData = {'NS-kNN','KNN-TN','kNN (EU)','kNN (PC)'};
+                subplot(4,3,subplot_count);
+                figAnnot = annotation('textbox', annotPosition(subplot_count,:), 'string', figureLetter{subplot_count});
+                figAnnot.FontSize = 12;
+                figAnnot.FontWeight = 'bold';
+                a = boxplot(allData,labelnames_allData);
+                yt = get(gca, 'YTick');
+                ylim([min(yt)-range(yt)/2 max(max(allData))*1.35]);
+                %set(gca,'FontSize',10,'XTickLabelRotation',90)
+                set(gca,'FontSize',5,'FontWeight','bold')
+                set(a,{'LineWidth'},{0.75});
+
+
+                ylabel('Normalized RMSE','FontSize',8);
+                title(sprintf('%d%% MV, %d%% MNAR, Thresh III = %d%%',percMV,percMNAR,percentMVlowAbund_III),'FontSize',7);
+                subplot_count = subplot_count + 1;
+
+                % Plot significance
+                [p,significance_KNNTN] = ranksum(allData(:,1),allData(:,2));
+                [p,significance_KNNEU] = ranksum(allData(:,1),allData(:,3));
+                [p,significance_KNNCORR] = ranksum(allData(:,1),allData(:,4));
+                if logical(significance_KNNTN)
+                    xt = get(gca, 'XTick');
+                    hold on;
+                    plot(xt([1 2]), [1 1]*max(max(allData))*1.025, '-k',  mean(xt([1 2])), max(max(allData))*1.08, '*k')
+                end
+                if logical(significance_KNNEU)
+                    xt = get(gca, 'XTick');
+                    hold on;
+                    plot(xt([1 3]), [1 1]*max(max(allData))*1.125, '-k',  mean(xt([1 3])), max(max(allData))*1.18, '*k')
+                end
+                if logical(significance_KNNCORR)
+                    xt = get(gca, 'XTick');
+                    hold on;
+                    plot(xt([1 4]), [1 1]*max(max(allData))*1.225, '-k',  mean(xt([1 4])), max(max(allData))*1.28, '*k')
+                end
             end
         end
     end
 end
 
-%% Plot sensitivity (Figure S9, S10, S11)
+%% Plot sensitivity (Figure S16-S18)
 
 clear; clc;
 dataFile = {'BacteriaData','MouseData','HumanData'};
-figureLetter = {'A.','B.','C.','D.','E.','F.'};
+figureLetter = {'a.','b.','c.','d.','e.','f.'};
 annotPosition = [0.1 0.98 0 0; 0.52 0.98 0 0;...
     0.1 0.66 0 0; 0.52 0.68 0 0;...
     0.1 0.36 0 0; 0.52 0.38 0 0];
@@ -490,6 +607,8 @@ for dataSet = 1:3
         xlabel('% Met. w/ MNAR (I)')
         ylabel('% Met. considered Low Abund. (II)')
         zlabel('% MNAR in Low Abund. (III)');
+        xlim([0 100]);
+        ylim([0 100]);
         %title(sprintf('kNN vs. NS-kNN - %s Data',dataFile{dataSet}(1:end-4)));
 
         cb = colorbar;
@@ -531,7 +650,7 @@ for dataSet = 1:3
         
         sortfewpoints = sorteverything(fewpoints,:);
         
-        %a = errorbar(sorteverything(:,1),sorteverything(:,2),sorteverything(:,3));
+        
         subplot(3,2,subplot_count);
         figAnnot = annotation('textbox', annotPosition(subplot_count,:), 'string', figureLetter{subplot_count});
         figAnnot.FontSize = 18;
@@ -539,11 +658,15 @@ for dataSet = 1:3
             
         hold on;
         a = errorbar(sortfewpoints(:,1),sortfewpoints(:,2),sortfewpoints(:,3));
+        %a = errorbar(sorteverything(:,1),sorteverything(:,2),sorteverything(:,3));
         b = plot(0:1:100,zeros(1,101));
         xlim([min(sortfewpoints(:,1)) max(sortfewpoints(:,1))]);
         
         a.Color = 'b';
+        a.LineWidth = 1.5;
         b.Color = 'r';
+        b.LineWidth = 1.5;
+        
         %title(sprintf('kNN vs. NS-kNN - %s Data',dataFile{dataSet}(1:end-4)));
         xlabel('% missing values that are MNAR');
         ylabel('NS-kNN NRMSE - kNN NRMSE');
@@ -560,4 +683,94 @@ for dataSet = 1:3
         end
         %}
     end
+end
+
+%% Plot sensitivity explanation (Figure S19)
+
+clear; clc;
+figureLetter = {'a.','b.'};
+annotPosition = [0.06 0.98 0 0; 0.49 0.98 0 0];
+
+load('MouseData_MM_MV30_Sensitivity');
+
+for i = 1:2156
+    dataStart = (i-1)*100+1;
+    ErrorAvg(i,:) = mean(SensitivityData(dataStart:dataStart+99,:));
+    ErrorStd(i,:) = std(SensitivityData(dataStart:dataStart+99,6:7));
+    ErrorAvgStd = [ErrorAvg ErrorStd];
+end
+        
+percentBelowThresh_I = ErrorAvgStd(:,3);
+LowAbundThresh_II = ErrorAvgStd(:,4);
+percentMVlowAbund_III = ErrorAvgStd(:,5);
+percentMV = ErrorAvg(1,2);
+
+DiffErrorAvg = ErrorAvgStd(:,7)-ErrorAvgStd(:,6);
+DiffErrorStd = sqrt(ErrorAvgStd(:,9).^2+ErrorAvgStd(:,8).^2);
+
+
+percentMNAR = 100*((percentBelowThresh_I/100).*(LowAbundThresh_II/100).*(percentMVlowAbund_III/100)...
++ (percentBelowThresh_I/100).*(1-LowAbundThresh_II/100).*(0.5*percentMVlowAbund_III/100))./(percentMV/100);
+
+sorteverything = [percentMNAR DiffErrorAvg DiffErrorStd];
+sorteverything = sortrows(sorteverything);
+
+fewpoints = [];
+for percentThresh = [0 10 20 30 40 50 60 70 80 90 100]
+    tempLoc = find(sorteverything(:,1) > percentThresh);
+    if ~isempty(tempLoc)
+        if tempLoc(1) == 1
+            fewpoints = [fewpoints tempLoc(1)];  
+        else
+            fewpoints = [fewpoints tempLoc(1)-1];  
+        end
+    end
+end
+
+sortfewpoints = sorteverything(fewpoints,:);
+
+figure('units','normalized','outerposition',[0 0 0.75 0.75]);
+
+subplot(1,2,1);
+hold on;
+figAnnot = annotation('textbox', annotPosition(1,:), 'string', figureLetter{1});
+figAnnot.FontSize = 18;
+figAnnot.FontWeight = 'bold';
+a = errorbar(sorteverything(:,1),sorteverything(:,2),sorteverything(:,3));
+%plot(sorteverything(:,1),sorteverything(:,2),'m','LineWidth',2);
+b = plot(0:1:100,zeros(1,101));
+xlim([min(sortfewpoints(:,1)) max(sortfewpoints(:,1))]);
+set(gca,'fontsize',14);
+xlabel('% missing values that are MNAR');
+ylabel('NS-kNN NRMSE - kNN NRMSE');
+
+subplot(1,2,2);
+hold on;
+figAnnot = annotation('textbox', annotPosition(2,:), 'string', figureLetter{2});
+figAnnot.FontSize = 18;
+figAnnot.FontWeight = 'bold';
+c = errorbar(sortfewpoints(:,1),sortfewpoints(:,2),sortfewpoints(:,3));
+d = plot(0:1:100,zeros(1,101));
+xlim([min(sortfewpoints(:,1)) max(sortfewpoints(:,1))]);
+
+a.Color = 'b';
+a.LineWidth = 1.5;
+b.Color = 'r';
+b.LineWidth = 1.5;
+c.Color = 'b';
+c.LineWidth = 1.5;
+d.Color = 'r';
+d.LineWidth = 1.5;
+set(gca,'fontsize',14);
+xlabel('% missing values that are MNAR');
+ylabel('NS-kNN NRMSE - kNN NRMSE');
+
+% Percentage at which kNN and NS-kNN error plots intersect. Uses InterX
+% function by NS 2010 found on MathWorks File Exchange.
+
+intersection = InterX([sorteverything(:,1)';sorteverything(:,2)'],[(0:1:100);zeros(1,101)]);
+if isempty(intersection)
+    0 % If no intesrection
+else
+    intersection(1,end)
 end

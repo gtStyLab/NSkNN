@@ -348,7 +348,7 @@ for dataSet = 1:3
     end
 end
 
-%% Mixed Missingness (MM) (Figure 5, S5, and S6)
+%% Mixed Missingness (MM) (Figure 5, S5-S6)
 
 clear;clc;
 
@@ -428,7 +428,7 @@ for dataSet = 1:3
     end
 end
 
-%% Sensitivity analysis (Figure S9, S10, S11)
+%% Sensitivity analysis (Figure S16-S19)
 % ***NOTE: Takes a long time to run. Faster to split up and parallelize
 % code, then recombine results.
 
