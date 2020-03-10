@@ -1,11 +1,14 @@
 function dataMV = removeDataMNAR_LODparam(rawData,percentMV,LOD)
 % Function to create missing values in the original data set (rawData)
 % based on the percent missing values (percentMV) given. Missing values are
-% created to simular MNAR values by creating a threshold where the 80%
-% lowest abundance values are removed in each metabolite to simulate values
-% below the limit of detection (LOD) and half of the remaining 20% are 
-% removed at random to simulate missing values close to the LOD. Output is 
-% a matrix with missing values (dataMV).
+% created to simulate MNAR values by creating a threshold where a certain
+% percent (set by the LOD input parameter) of lowest abundance values are 
+% removed in each metabolite to simulate values below the limit of 
+% detection (LOD) and half of the remaining (1-LOD)% are removed at random 
+% to simulate missing values close to the LOD. Output is a matrix with 
+% missing values (dataMV). This function is used for Figure S1 of the 
+% Supplementary. In removeDataMNAR.m, the LOD input parameter is held at 
+% 80%.
 
 % Adjust percentMV to account for half of values randomly removed in upper
 % portion (based on LOD parameter) of abundThresh.
