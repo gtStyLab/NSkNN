@@ -1,7 +1,7 @@
 function dataMV = removeDataMNAR(rawData,percentMV)
 % Function to create missing values in the original data set (rawData)
 % based on the percent missing values (percentMV) given. Missing values are
-% created to simular MNAR values by creating a threshold where the 80%
+% created to simulate MNAR values by creating a threshold where the 80%
 % lowest abundance values are removed in each metabolite to simulate values
 % below the limit of detection (LOD) and half of the remaining 20% are 
 % removed at random to simulate missing values close to the LOD. Output is 
